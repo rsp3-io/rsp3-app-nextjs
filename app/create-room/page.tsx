@@ -98,8 +98,8 @@ export default function CreateRoom() {
         tier: selectedTier,
       });
 
-      // Redirect to dashboard or room details
-      router.push('/dashboard');
+      // Redirect to my games page
+      router.push('/my-games');
     } catch (error) {
       console.error('Failed to create room:', error);
     }

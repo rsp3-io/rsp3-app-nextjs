@@ -49,6 +49,7 @@ export default function MoveSelector({ selectedMove, onMoveChange, disabled = fa
           return (
             <button
               key={option.move}
+              type="button"
               onClick={() => !disabled && onMoveChange(option.move)}
               disabled={disabled}
               className={`relative p-6 rounded-lg border-2 transition-all duration-200 ${
