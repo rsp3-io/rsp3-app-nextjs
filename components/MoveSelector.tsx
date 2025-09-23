@@ -12,7 +12,7 @@ const moveOptions = [
   {
     move: Move.Rock,
     name: 'Rock',
-    emoji: '🪨',
+    emoji: '✊',
     description: 'Crushes scissors',
     color: 'bg-gray-500',
     hoverColor: 'hover:bg-gray-600',

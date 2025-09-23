@@ -19,7 +19,7 @@ const moveNames: Record<Move, string> = {
 
 const moveEmojis: Record<Move, string> = {
   [Move.None]: '❓',
-  [Move.Rock]: '🪨',
+  [Move.Rock]: '✊',
   [Move.Scissor]: '✂️',
   [Move.Paper]: '📄',
 };
