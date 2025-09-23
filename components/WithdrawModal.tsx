@@ -32,16 +32,12 @@ export default function WithdrawModal({ isOpen, onClose, onSuccess }: WithdrawMo
   // Handle withdraw success
   useEffect(() => {
     if (isConfirmed && !withdrawSuccessNotified.current) {
+      console.log('Withdraw success triggered');
       withdrawSuccessNotified.current = true;
-      addToast({
-        type: 'success',
-        title: 'Withdraw Successful!',
-        message: `${amount} USDT has been withdrawn to your wallet`,
-      });
       onSuccess?.();
       onClose();
     }
-  }, [isConfirmed, addToast, amount, onSuccess, onClose]);
+  }, [isConfirmed, onSuccess, onClose]);
 
   // Handle withdraw error
   useEffect(() => {
@@ -62,11 +58,8 @@ export default function WithdrawModal({ isOpen, onClose, onSuccess }: WithdrawMo
       withdrawSuccessNotified.current = false;
       withdrawErrorNotified.current = false;
       reset(); // Reset hook state when modal opens
-    } else {
-      // Reset notification flags when modal closes
-      withdrawSuccessNotified.current = false;
-      withdrawErrorNotified.current = false;
     }
+    // Don't reset notification flags when modal closes to prevent duplicate notifications
   }, [isOpen, reset]);
 
   const handleWithdraw = async () => {

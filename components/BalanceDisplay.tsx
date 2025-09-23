@@ -33,6 +33,25 @@ export default function BalanceDisplay() {
     refetch();
   }, [refetch]);
 
+  // Memoize success handlers to prevent duplicate toasts
+  const handleDepositSuccess = useCallback(() => {
+    refetch();
+    addToast({
+      type: 'success',
+      title: 'Deposit Successful!',
+      message: 'USDT has been deposited to your game balance',
+    });
+  }, [refetch, addToast]);
+
+  const handleWithdrawSuccess = useCallback(() => {
+    refetch();
+    addToast({
+      type: 'success', 
+      title: 'Withdraw Successful!',
+      message: 'USDT has been withdrawn to your wallet',
+    });
+  }, [refetch, addToast]);
+
   // Handle faucet success
   useEffect(() => {
     if (isFaucetConfirmed && !faucetSuccessNotified.current) {
@@ -166,12 +185,12 @@ export default function BalanceDisplay() {
       <DepositModal
         isOpen={showDepositModal}
         onClose={() => setShowDepositModal(false)}
-        onSuccess={handleRefetch}
+        onSuccess={handleDepositSuccess}
       />
       <WithdrawModal
         isOpen={showWithdrawModal}
         onClose={() => setShowWithdrawModal(false)}
-        onSuccess={handleRefetch}
+        onSuccess={handleWithdrawSuccess}
       />
     </>
   );

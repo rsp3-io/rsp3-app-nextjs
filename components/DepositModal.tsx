@@ -32,16 +32,12 @@ export default function DepositModal({ isOpen, onClose, onSuccess }: DepositModa
   // Handle deposit success
   useEffect(() => {
     if (isConfirmed && !depositSuccessNotified.current) {
+      console.log('Deposit success triggered');
       depositSuccessNotified.current = true;
-      addToast({
-        type: 'success',
-        title: 'Deposit Successful!',
-        message: `${amount} USDT has been deposited to your game balance`,
-      });
       onSuccess?.();
       onClose();
     }
-  }, [isConfirmed, addToast, amount, onSuccess, onClose]);
+  }, [isConfirmed, onSuccess, onClose]);
 
   // Handle deposit error
   useEffect(() => {
@@ -62,12 +58,9 @@ export default function DepositModal({ isOpen, onClose, onSuccess }: DepositModa
       depositSuccessNotified.current = false;
       depositErrorNotified.current = false;
       reset(); // Reset hook state when modal opens
-    } else {
-      // Reset notification flags when modal closes
-      depositSuccessNotified.current = false;
-      depositErrorNotified.current = false;
     }
-  }, [isOpen]); // Remove reset from dependencies to prevent infinite loops
+    // Don't reset notification flags when modal closes to prevent duplicate notifications
+  }, [isOpen, reset]);
 
   const handleDeposit = async () => {
     if (!amount || parseFloat(amount) <= 0) {
