@@ -92,7 +92,7 @@ export default function CreateRoom() {
 
     try {
       const baseStake = parseStake(baseStakeInput, tokenDecimals);
-      const result = await createRoom({
+      await createRoom({
         baseStake,
         commitHash,
         tier: selectedTier,
@@ -225,7 +225,7 @@ export default function CreateRoom() {
                     {commitHash}
                   </p>
                   <p className="text-xs text-gray-600 mt-2">
-                    This hash commits your move to the blockchain. You'll reveal the actual move after your opponent joins.
+                    This hash commits your move to the blockchain. You&apos;ll reveal the actual move after your opponent joins.
                   </p>
                 </div>
               )}

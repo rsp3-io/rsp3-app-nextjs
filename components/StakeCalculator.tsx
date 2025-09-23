@@ -10,13 +10,15 @@ interface StakeCalculatorProps {
   tokenDecimals?: number;
 }
 
-const moveNames = {
+const moveNames: Record<Move, string> = {
+  [Move.None]: 'None',
   [Move.Rock]: 'Rock',
   [Move.Scissor]: 'Scissor',
   [Move.Paper]: 'Paper',
 };
 
-const moveEmojis = {
+const moveEmojis: Record<Move, string> = {
+  [Move.None]: '❓',
   [Move.Rock]: '🪨',
   [Move.Scissor]: '✂️',
   [Move.Paper]: '📄',
@@ -28,7 +30,7 @@ export default function StakeCalculator({ baseStake, tier, tokenDecimals = 6 }: 
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    if (baseStake > 0n) {
+    if (baseStake > BigInt(0)) {
       setIsLoading(true);
       try {
         const calculations = getStakeCalculations(baseStake, tier);
@@ -43,7 +45,7 @@ export default function StakeCalculator({ baseStake, tier, tokenDecimals = 6 }: 
     }
   }, [baseStake, tier, getStakeCalculations]);
 
-  if (baseStake === 0n) {
+  if (baseStake === BigInt(0)) {
     return (
       <div className="bg-gray-50 rounded-lg p-4">
         <h3 className="text-lg font-semibold text-gray-900 mb-2">Stake Calculator</h3>
@@ -92,7 +94,7 @@ export default function StakeCalculator({ baseStake, tier, tokenDecimals = 6 }: 
       
       <div className="mt-4 p-3 bg-blue-50 rounded-lg">
         <div className="text-sm text-blue-800">
-          <strong>Note:</strong> When you create a room, you'll lock the maximum stake (Rock) plus a small collateral penalty. 
+          <strong>Note:</strong> When you create a room, you&apos;ll lock the maximum stake (Rock) plus a small collateral penalty. 
           Your actual stake will be calculated when you reveal your move.
         </div>
       </div>

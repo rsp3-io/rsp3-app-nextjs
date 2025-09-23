@@ -82,7 +82,7 @@ export default function MoveSelector({ selectedMove, onMoveChange, disabled = fa
         <div className="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
           <div className="text-sm text-yellow-800">
             <strong>Important:</strong> Your move will be committed to the blockchain and cannot be changed. 
-            You'll reveal it after your opponent joins the room.
+            You&apos;ll reveal it after your opponent joins the room.
           </div>
         </div>
       )}
