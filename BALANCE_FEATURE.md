@@ -104,12 +104,38 @@ The balance display now includes a faucet button that allows users to get test U
 - Automatically refetches balances after successful transaction
 - Provides comprehensive error handling and user feedback
 
+## Deposit/Withdraw Feature
+
+The balance display now includes deposit and withdraw functionality for moving USDT between wallet and game balance:
+
+### Features
+- **Deposit Button**: Blue button next to in-game balance to deposit USDT from wallet to game
+- **Withdraw Button**: Orange button next to in-game balance to withdraw USDT from game to wallet
+- **Modal Interface**: Clean modal dialogs for amount input and confirmation
+- **Balance Validation**: Prevents depositing more than wallet balance or withdrawing more than free balance
+- **Auto-approval**: Automatically handles USDT approval for deposits
+- **Loading States**: Shows appropriate loading states during transactions
+- **Success/Error Handling**: Toast notifications for transaction results
+
+### Usage
+1. Click "Deposit" or "Withdraw" button next to in-game balance
+2. Enter amount in the modal (or click "MAX" for maximum available)
+3. Confirm transaction in wallet
+4. Wait for confirmation and see updated balances
+
+### Technical Implementation
+- Uses `useDeposit()` and `useWithdraw()` hooks for contract interaction
+- Handles USDT approval automatically for deposits
+- Validates balances before transactions
+- Provides comprehensive error handling and user feedback
+- Auto-refreshes balances after successful transactions
+
 ## Future Enhancements
 
-- [ ] Add deposit/withdraw buttons to balance display
 - [ ] Show balance history/charts
 - [ ] Add balance notifications for low funds
-- [ ] Implement balance refresh on user action
 - [ ] Add balance tooltips with more details
 - [ ] Add faucet cooldown/rate limiting
 - [ ] Show faucet amount in UI
+- [ ] Add transaction history
+- [ ] Add bulk deposit/withdraw options
