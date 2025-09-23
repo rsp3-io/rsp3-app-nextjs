@@ -42,3 +42,9 @@ export interface ContractConfig {
   usdtAddress: string;
   chainId: number;
 }
+
+// Balance types
+export interface PlayerBalance {
+  freeBalance: bigint;
+  lockedBalance: bigint;
+}
