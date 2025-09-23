@@ -9,11 +9,12 @@ interface RoomCardProps {
   onJoinRoom: (roomId: bigint, move: Move) => Promise<void>;
   tokenDecimals: number;
   isExpired: boolean;
+  isJoining?: boolean;
 }
 
-export default function RoomCard({ room, onJoinRoom, tokenDecimals, isExpired }: RoomCardProps) {
+export default function RoomCard({ room, onJoinRoom, tokenDecimals, isExpired, isJoining: globalIsJoining }: RoomCardProps) {
   const [selectedMove, setSelectedMove] = useState<Move | null>(null);
-  const [isJoining, setIsJoining] = useState(false);
+  const [isLocalJoining, setIsLocalJoining] = useState(false);
 
   const formatStake = (amount: bigint) => {
     return formatUnits(amount, tokenDecimals);
@@ -80,17 +81,19 @@ export default function RoomCard({ room, onJoinRoom, tokenDecimals, isExpired }:
     }
   };
 
+  const isJoining = globalIsJoining || isLocalJoining;
+
   const handleJoinRoom = async () => {
     if (!selectedMove || isJoining || isExpired) return;
 
-    setIsJoining(true);
+    setIsLocalJoining(true);
     try {
       await onJoinRoom(room.roomId, selectedMove);
       setSelectedMove(null);
     } catch (error) {
       console.error('Failed to join room:', error);
     } finally {
-      setIsJoining(false);
+      setIsLocalJoining(false);
     }
   };
 

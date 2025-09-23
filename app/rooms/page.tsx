@@ -17,6 +17,7 @@ export default function Rooms() {
   const [showExpired, setShowExpired] = useState(false);
   const [filteredRooms, setFilteredRooms] = useState<GameRoom[]>([]);
   const [currentTime, setCurrentTime] = useState(Math.floor(Date.now() / 1000));
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
   // Get token decimals
   const { data: tokenDecimals } = useReadContract({
@@ -55,8 +56,13 @@ export default function Rooms() {
     }
   };
 
-  const handleRefresh = () => {
-    refetch();
+  const handleRefresh = async () => {
+    setIsRefreshing(true);
+    try {
+      await refetch();
+    } finally {
+      setIsRefreshing(false);
+    }
   };
 
   const isRoomExpired = (room: GameRoom) => {
@@ -109,10 +115,10 @@ export default function Rooms() {
                 </div>
                 <button
                   onClick={handleRefresh}
-                  disabled={isLoading}
+                  disabled={isLoading || isRefreshing}
                   className="bg-gray-600 hover:bg-gray-700 disabled:bg-gray-400 text-white px-4 py-2 rounded-lg font-medium transition-colors"
                 >
-                  {isLoading ? 'Refreshing...' : 'Refresh'}
+                  {isLoading || isRefreshing ? 'Refreshing...' : 'Refresh'}
                 </button>
               </div>
             </div>
@@ -158,6 +164,7 @@ export default function Rooms() {
                     onJoinRoom={handleJoinRoom}
                     tokenDecimals={decimals}
                     isExpired={isRoomExpired(room)}
+                    isJoining={isJoining}
                   />
                 ))}
               </div>
