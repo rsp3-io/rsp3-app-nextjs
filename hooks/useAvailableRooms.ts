@@ -32,7 +32,7 @@ export function useAvailableRooms() {
   return {
     rooms: filteredRooms,
     refetch,
-    isLoading: isLoading || isFetching, // Include both initial loading and refetching
+    isLoading: isLoading, // Include both initial loading and refetching
     error,
   };
 }
