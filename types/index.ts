@@ -1,20 +1,42 @@
 // Game-related types
-export interface GameRoom {
-  id: string;
-  creator: string;
-  player1: string;
-  player2?: string;
-  betAmount: string;
-  status: 'waiting' | 'active' | 'completed' | 'cancelled';
-  createdAt: number;
-  moves?: {
-    player1?: Move;
-    player2?: Move;
-  };
-  result?: GameResult;
+export enum Tier {
+  Casual = 0,
+  Standard = 1,
+  Degen = 2,
 }
 
-export interface Move {
+export enum Move {
+  None = 0,
+  Rock = 1,
+  Scissor = 2,
+  Paper = 3,
+}
+
+export enum GameState {
+  None = 0,
+  WaitingForPlayerB = 1,
+  WaitingForReveal = 2,
+  Completed = 3,
+  Forfeited = 4,
+}
+
+export interface GameRoom {
+  roomId: bigint;
+  playerA: string;
+  playerB: string;
+  baseStake: bigint;
+  playerAStake: bigint;
+  playerBStake: bigint;
+  playerACommit: string;
+  playerBMove: Move;
+  revealDeadline: bigint;
+  expirationTime: bigint;
+  state: GameState;
+  collateralPenalty: bigint;
+  tier: Tier;
+}
+
+export interface MoveData {
   player: string;
   choice: 'rock' | 'paper' | 'scissors';
   timestamp: number;
@@ -22,8 +44,8 @@ export interface Move {
 
 export interface GameResult {
   winner: string | null; // null for tie
-  player1Move: Move;
-  player2Move: Move;
+  player1Move: MoveData;
+  player2Move: MoveData;
   timestamp: number;
 }
 
@@ -47,4 +69,23 @@ export interface ContractConfig {
 export interface PlayerBalance {
   freeBalance: bigint;
   lockedBalance: bigint;
+}
+
+// Room creation types
+export interface TierMultipliers {
+  rockMultiplier: bigint;
+  scissorMultiplier: bigint;
+  paperMultiplier: bigint;
+}
+
+export interface CreateRoomParams {
+  baseStake: bigint;
+  commitHash: string;
+  tier: Tier;
+}
+
+export interface StakeCalculation {
+  move: Move;
+  stake: bigint;
+  multiplier: bigint;
 }

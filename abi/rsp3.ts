@@ -425,6 +425,11 @@ export const RSP3_ABI = [
         name: "move",
         type: "uint8",
       },
+      {
+        internalType: "enum IRSP3.Tier",
+        name: "tier",
+        type: "uint8",
+      },
     ],
     name: "calculateStake",
     outputs: [
@@ -480,6 +485,11 @@ export const RSP3_ABI = [
         internalType: "bytes32",
         name: "commitHash",
         type: "bytes32",
+      },
+      {
+        internalType: "enum IRSP3.Tier",
+        name: "tier",
+        type: "uint8",
       },
     ],
     name: "createRoom",
@@ -579,6 +589,11 @@ export const RSP3_ABI = [
             name: "collateralPenalty",
             type: "uint256",
           },
+          {
+            internalType: "enum IRSP3.Tier",
+            name: "tier",
+            type: "uint8",
+          },
         ],
         internalType: "struct IRSP3.Room[]",
         name: "",
@@ -672,6 +687,11 @@ export const RSP3_ABI = [
             internalType: "uint256",
             name: "collateralPenalty",
             type: "uint256",
+          },
+          {
+            internalType: "enum IRSP3.Tier",
+            name: "tier",
+            type: "uint8",
           },
         ],
         internalType: "struct IRSP3.Room[]",
@@ -785,6 +805,11 @@ export const RSP3_ABI = [
             name: "collateralPenalty",
             type: "uint256",
           },
+          {
+            internalType: "enum IRSP3.Tier",
+            name: "tier",
+            type: "uint8",
+          },
         ],
         internalType: "struct IRSP3.Room",
         name: "",
@@ -824,6 +849,35 @@ export const RSP3_ABI = [
       },
     ],
     stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "enum IRSP3.Tier",
+        name: "tier",
+        type: "uint8",
+      },
+    ],
+    name: "getTierMultipliers",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "rockMultiplier",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "scissorMultiplier",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "paperMultiplier",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "pure",
     type: "function",
   },
   {

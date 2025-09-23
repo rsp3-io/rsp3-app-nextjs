@@ -1,4 +1,6 @@
 import { ContractConfig } from '@/types';
+import { RSP3_ABI } from '@/abi/rsp3';
+import { ERC20_ABI } from '@/abi/erc20';
 
 // Contract addresses for Immutable zkEVM Testnet
 export const CONTRACT_CONFIG: ContractConfig = {
@@ -7,13 +9,5 @@ export const CONTRACT_CONFIG: ContractConfig = {
   chainId: 13473, // Immutable zkEVM Testnet
 };
 
-// Contract ABI imports will be added here when migrating from the React app
-// For now, we'll use placeholder types
-
-export const RSP3_ABI = [
-  // ABI will be imported from the smart contracts project
-] as const;
-
-export const USDT_ABI = [
-  // ABI will be imported from the smart contracts project
-] as const;
+// Export ABIs
+export { RSP3_ABI, ERC20_ABI as USDT_ABI };
