@@ -1,19 +1,21 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useRef } from 'react';
 import { useReadContract } from 'wagmi';
-import { keccak256, toHex, concat, encodeFunctionData } from 'viem';
+import { keccak256, toHex, concat, encodeFunctionData, decodeEventLog, encodePacked } from 'viem';
 import { RSP3_ABI } from '@/abi/rsp3';
 import { CONTRACT_CONFIG } from '@/lib/contracts';
 import { Tier, Move, TierMultipliers, CreateRoomParams, StakeCalculation } from '@/types';
 import { useToast } from '@/contexts/ToastContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { passportInstance } from '@/lib/passport';
+import { saveMoveChoice } from '@/lib/moveStorage';
 
 export function useCreateRoom() {
   const { accountAddress } = useAuth();
   const { addToast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
+  const currentRoomData = useRef<{ baseStake: bigint; move: Move; salt: string } | null>(null);
 
   // Get tier multipliers
   const { data: casualMultipliers } = useReadContract({
@@ -55,14 +57,14 @@ export function useCreateRoom() {
   const generateSalt = useCallback(() => {
     const randomBytes = new Uint8Array(32);
     crypto.getRandomValues(randomBytes);
-    return toHex(randomBytes);
+    // Generate plain hex string without 0x prefix (same as MVC repo)
+    return Array.from(randomBytes, byte => byte.toString(16).padStart(2, '0')).join('');
   }, []);
 
   // Create commit hash for a move
   const createCommitHash = useCallback((move: Move, salt: string) => {
-    const moveBytes = toHex(move, { size: 32 });
-    const saltBytes = salt as `0x${string}`;
-    return keccak256(concat([moveBytes, saltBytes]));
+    // Use the same encoding as MVC repo: keccak256(abi.encodePacked(move, salt))
+    return keccak256(encodePacked(['uint8', 'string'], [move, salt]));
   }, []);
 
   // Get tier multipliers from contract data
@@ -156,14 +158,60 @@ export function useCreateRoom() {
     return calculations;
   }, [calculateStake, getTierMultipliers]);
 
+  // Helper function to extract room ID from transaction receipt
+  const extractRoomIdFromReceipt = useCallback((receipt: any): number | null => {
+    try {
+      // Find the RoomCreated event log
+      const contractAddress = CONTRACT_CONFIG.rsp3Address?.toLowerCase();
+      
+      for (const log of receipt.logs) {
+        if (log.address.toLowerCase() === contractAddress) {
+          try {
+            // Decode the log to check if it's a RoomCreated event
+            const decoded = decodeEventLog({
+              abi: RSP3_ABI,
+              data: log.data,
+              topics: log.topics,
+            });
+            
+            if (decoded.eventName === 'RoomCreated') {
+              const roomId = Number(decoded.args.roomId);
+              console.log('🎉 Room Created Successfully!');
+              console.log('Room ID:', roomId);
+              console.log('Player A:', decoded.args.playerA);
+              console.log('Base Stake:', decoded.args.baseStake.toString());
+              return roomId;
+            }
+          } catch (decodeError) {
+            // This log might not be a RoomCreated event, continue to next log
+            continue;
+          }
+        }
+      }
+      
+      console.log('⚠️ RoomCreated event not found in transaction logs');
+      console.log('Transaction receipt:', receipt);
+      console.log('All logs:', receipt.logs);
+      
+    } catch (error) {
+      console.error('❌ Failed to parse room ID from receipt:', error);
+    }
+    
+    return null;
+  }, []);
+
   // Create a new room
-  const createRoom = useCallback(async (params: CreateRoomParams) => {
+  const createRoom = useCallback(async (params: CreateRoomParams & { move: Move; salt: string }) => {
     if (!accountAddress || !CONTRACT_CONFIG.rsp3Address) {
       throw new Error('Account or contract address not available');
     }
 
     setIsLoading(true);
     try {
+      // Store the room data for later use when extracting room ID
+      currentRoomData.current = { baseStake: params.baseStake, move: params.move, salt: params.salt };
+      console.log('💾 Storing room creation data:', { baseStake: params.baseStake.toString(), move: params.move, saltLength: params.salt.length });
+
       // Get the provider from Passport
       const provider = await passportInstance.connectEvm();
       
@@ -195,8 +243,21 @@ export function useCreateRoom() {
         });
         
         if (receipt) {
+          // Extract room ID from transaction receipt
+          const roomId = extractRoomIdFromReceipt(receipt);
+          
+          // Save move choice if room ID was extracted successfully
+          if (roomId && currentRoomData.current) {
+            const { baseStake, move, salt } = currentRoomData.current;
+            saveMoveChoice(roomId, baseStake, move, salt);
+            console.log('✅ Move choice saved to permanent storage:', { roomId, move });
+            
+            // Clear the current room data since it's been processed
+            currentRoomData.current = null;
+          }
+          
           addToast({ title: 'Room created successfully!', type: 'success' });
-          return txHash;
+          return { txHash, roomId };
         }
         
         attempts++;

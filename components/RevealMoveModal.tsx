@@ -3,12 +3,14 @@
 import { useState, useEffect } from 'react';
 import { Move } from '@/types';
 import MoveSelector from './MoveSelector';
+import { useSavedMoveChoice } from '@/hooks/useSavedMoveChoice';
 
 interface RevealMoveModalProps {
   isOpen: boolean;
   onClose: () => void;
   onReveal: (move: Move, salt: string) => void;
   roomId: number;
+  baseStake: bigint; // Base stake for the room to retrieve saved move choice
   isLoading?: boolean;
 }
 
@@ -17,20 +19,29 @@ export default function RevealMoveModal({
   onClose, 
   onReveal, 
   roomId, 
+  baseStake,
   isLoading = false 
 }: RevealMoveModalProps) {
   const [selectedMove, setSelectedMove] = useState<Move | null>(null);
   const [salt, setSalt] = useState('');
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
-  // Reset form when modal opens
+  // Get saved move choice for this room
+  const savedChoice = useSavedMoveChoice(roomId, baseStake);
+
+  // Reset form when modal is closed and auto-select saved move when opened
   useEffect(() => {
-    if (isOpen) {
+    if (!isOpen) {
       setSelectedMove(null);
       setSalt('');
       setErrors({});
+    } else if (savedChoice) {
+      // Auto-select the saved move and salt
+      setSelectedMove(savedChoice.move);
+      setSalt(savedChoice.salt);
+      console.log('✨ Auto-selected saved move and salt:', savedChoice.move);
     }
-  }, [isOpen]);
+  }, [isOpen, savedChoice]);
 
   const validateForm = () => {
     const newErrors: { [key: string]: string } = {};
@@ -51,7 +62,17 @@ export default function RevealMoveModal({
     if (!validateForm()) return;
     
     if (selectedMove !== null) {
-      onReveal(selectedMove, salt);
+      // Use the saved salt if available, otherwise use the manually entered salt
+      if (savedChoice && savedChoice.move === selectedMove) {
+        console.log('🔑 Using saved salt for reveal');
+        onReveal(selectedMove, savedChoice.salt);
+      } else if (salt.trim()) {
+        onReveal(selectedMove, salt);
+      } else {
+        console.error('No saved choice found and no manual salt provided');
+        setErrors({ salt: 'No saved move data found. Please enter the salt manually.' });
+        return;
+      }
     }
   };
 
@@ -101,37 +122,63 @@ export default function RevealMoveModal({
               id="salt"
               value={salt}
               onChange={(e) => setSalt(e.target.value)}
-              disabled={isLoading}
+              disabled={isLoading || !!(savedChoice && savedChoice.move === selectedMove)}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
-              placeholder="Enter the salt you used when creating this room"
+              placeholder={savedChoice ? "Auto-filled from saved data" : "Enter the salt you used when creating this room"}
             />
             {errors.salt && (
               <p className="mt-1 text-sm text-red-600">{errors.salt}</p>
             )}
-            <p className="mt-1 text-sm text-gray-600">
-              This should be the same random string you used when you created the room commitment.
-            </p>
+            {savedChoice && savedChoice.move === selectedMove ? (
+              <p className="mt-1 text-sm text-green-600">
+                ✅ Salt automatically loaded from browser storage
+              </p>
+            ) : (
+              <p className="mt-1 text-sm text-gray-600">
+                This should be the same random string you used when you created the room commitment.
+              </p>
+            )}
           </div>
 
-          {/* Warning */}
-          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-            <div className="flex">
-              <div className="flex-shrink-0">
-                <svg className="h-5 w-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
-                </svg>
-              </div>
-              <div className="ml-3">
-                <h3 className="text-sm font-medium text-yellow-800">
-                  Important
-                </h3>
-                <p className="mt-1 text-sm text-yellow-700">
-                  Make sure you select the exact same move and enter the exact same salt that you used when creating this room. 
-                  If they don't match, the transaction will fail.
-                </p>
+          {/* Warning/Info */}
+          {savedChoice ? (
+            <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+              <div className="flex">
+                <div className="flex-shrink-0">
+                  <svg className="h-5 w-5 text-green-400" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                  </svg>
+                </div>
+                <div className="ml-3">
+                  <h3 className="text-sm font-medium text-green-800">
+                    Move and Salt Found!
+                  </h3>
+                  <p className="mt-1 text-sm text-green-700">
+                    Your move and salt have been automatically loaded from browser storage. 
+                    You can proceed to reveal your move.
+                  </p>
+                </div>
               </div>
             </div>
-          </div>
+          ) : (
+            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+              <div className="flex">
+                <div className="flex-shrink-0">
+                  <svg className="h-5 w-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                  </svg>
+                </div>
+                <div className="ml-3">
+                  <h3 className="text-sm font-medium text-yellow-800">
+                    Manual Entry Required
+                  </h3>
+                  <p className="mt-1 text-sm text-yellow-700">
+                    No saved move data found for this room. Please manually select the exact same move and enter the exact same salt that you used when creating this room.
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
 
         <div className="flex justify-end space-x-3 p-6 border-t bg-gray-50">

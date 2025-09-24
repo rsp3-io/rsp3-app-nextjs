@@ -12,8 +12,7 @@ import { CONTRACT_CONFIG } from '@/lib/contracts';
 import { RSP3_ABI } from '@/abi/rsp3';
 import { formatBalance } from '@/hooks/useBalance';
 import { useAuth } from '@/contexts/AuthContext';
-import RevealMoveModal from '@/components/RevealMoveModal';
-import { formatTierBadge } from '@/lib/tierUtils';
+import GameCard from '@/components/GameCard';
 
 interface PlayerGame {
   roomId: number;
@@ -23,6 +22,7 @@ interface PlayerGame {
   stake: string;
   needsAction: boolean;
   tier: number;
+  baseStake: bigint;
 }
 
 export default function MyGames() {
@@ -33,10 +33,9 @@ export default function MyGames() {
   const { cancelExpiredRoom } = useCancelExpiredRoom();
   const { claimForfeit } = useClaimForfeit();
   const [currentTime, setCurrentTime] = useState(Math.floor(Date.now() / 1000));
-  const [revealModalOpen, setRevealModalOpen] = useState(false);
-  const [selectedRoomForReveal, setSelectedRoomForReveal] = useState<number | null>(null);
   const [cancellingRooms, setCancellingRooms] = useState<Set<number>>(new Set());
   const [claimingRooms, setClaimingRooms] = useState<Set<number>>(new Set());
+  const [revealingRooms, setRevealingRooms] = useState<Set<number>>(new Set());
 
   // Get token decimals
   const { data: tokenDecimals } = useReadContract({
@@ -75,25 +74,24 @@ export default function MyGames() {
         stake: formatBalance(stake, decimals),
         needsAction: isPlayerA && room.state === GameState.WaitingForReveal && timeLeft > 0,
         tier: room.tier,
+        baseStake: room.baseStake,
       };
     })
     .sort((a, b) => b.roomId - a.roomId); // Sort by roomId descending (newest first)
 
-  const handleRevealMove = (roomId: number) => {
-    setSelectedRoomForReveal(roomId);
-    setRevealModalOpen(true);
-  };
-
-  const handleRevealMoveConfirm = async (move: Move, salt: string) => {
-    if (selectedRoomForReveal) {
-      try {
-        await revealMove(selectedRoomForReveal, move, salt);
-        setRevealModalOpen(false);
-        setSelectedRoomForReveal(null);
-        await refetch(); // Refresh the room data
-      } catch (error) {
-        console.error('Failed to reveal move:', error);
-      }
+  const handleRevealMove = async (roomId: number, move: Move, salt: string) => {
+    setRevealingRooms(prev => new Set(prev).add(roomId));
+    try {
+      await revealMove(roomId, move, salt);
+      await refetch(); // Refresh the room data
+    } catch (error) {
+      console.error('Failed to reveal move:', error);
+    } finally {
+      setRevealingRooms(prev => {
+        const newSet = new Set(prev);
+        newSet.delete(roomId);
+        return newSet;
+      });
     }
   };
 
@@ -132,6 +130,7 @@ export default function MyGames() {
   const handleRefresh = async () => {
     await refetch();
   };
+
 
   const formatTimeLeft = (seconds: number): string => {
     if (seconds <= 0) return 'Expired';
@@ -225,97 +224,25 @@ export default function MyGames() {
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {playerGames.map((game) => (
-                  <div key={game.roomId} className="bg-white rounded-lg shadow-md p-6">
-                    <div className="flex justify-between items-start mb-4">
-                      <div>
-                        <div className="flex items-center gap-2 mb-1">
-                          <h3 className="text-xl font-semibold text-gray-900">Room #{game.roomId}</h3>
-                          {(() => {
-                            const tierBadge = formatTierBadge(game.tier);
-                            return (
-                              <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${tierBadge.colors.textColor} ${tierBadge.colors.bgColor}`}>
-                                {tierBadge.emoji} {tierBadge.name}
-                              </span>
-                            );
-                          })()}
-                        </div>
-                        <p className="text-gray-600">
-                          {game.role === 'playerA' ? 'You created this room' : 'You joined this room'}
-                        </p>
-                      </div>
-                      <div className="text-right">
-                        <p className="text-lg font-medium text-gray-900">{game.stake} USDT</p>
-                        <p className="text-sm text-gray-600">⏱️ {formatTimeLeft(game.timeLeft)}</p>
-                      </div>
-                    </div>
-                    
-                    <div className="mb-4">
-                      <span className={`inline-block px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(game)}`}>
-                        {getStateMessage(game)}
-                      </span>
-                    </div>
-
-                    <div className="flex gap-2">
-                      {/* Reveal button - enabled only when PlayerB joined and user needs to reveal */}
-                      {game.needsAction && game.state === GameState.WaitingForReveal ? (
-                        <button
-                          onClick={() => handleRevealMove(game.roomId)}
-                          className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 font-medium"
-                        >
-                          Reveal Move
-                        </button>
-                      ) : game.role === 'playerA' && game.state === GameState.WaitingForPlayerB && game.timeLeft <= 0 ? (
-                        <button
-                          onClick={() => handleCancelRoom(game.roomId)}
-                          disabled={cancellingRooms.has(game.roomId)}
-                          className="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 font-medium disabled:opacity-50 disabled:cursor-not-allowed"
-                        >
-                          {cancellingRooms.has(game.roomId) ? 'Cancelling...' : 'Cancel Expired Room'}
-                        </button>
-                      ) : game.role === 'playerA' && game.state === GameState.WaitingForReveal && game.timeLeft <= 0 ? (
-                        <button
-                          disabled
-                          className="bg-gray-400 text-white px-4 py-2 rounded-lg cursor-not-allowed font-medium"
-                        >
-                          You Forfeited
-                        </button>
-                      ) : game.role === 'playerB' && game.state === GameState.WaitingForReveal && game.timeLeft <= 0 ? (
-                        <button
-                          onClick={() => handleClaimForfeit(game.roomId)}
-                          disabled={claimingRooms.has(game.roomId)}
-                          className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 font-medium disabled:opacity-50 disabled:cursor-not-allowed"
-                        >
-                          {claimingRooms.has(game.roomId) ? 'Claiming...' : 'Claim Forfeit'}
-                        </button>
-                      ) : (
-                        <button
-                          disabled
-                          className="bg-gray-400 text-white px-4 py-2 rounded-lg cursor-not-allowed font-medium"
-                        >
-                          {game.timeLeft <= 0 ? 'Room Expired' : 'Waiting for opponent'}
-                        </button>
-                      )}
-                    </div>
-                  </div>
+                  <GameCard
+                    key={game.roomId}
+                    game={game}
+                    onRevealMove={handleRevealMove}
+                    onCancelRoom={handleCancelRoom}
+                    onClaimForfeit={handleClaimForfeit}
+                    cancellingRooms={cancellingRooms}
+                    claimingRooms={claimingRooms}
+                    revealingRooms={revealingRooms}
+                    formatTimeLeft={formatTimeLeft}
+                    getStateMessage={getStateMessage}
+                    getStatusColor={getStatusColor}
+                  />
                 ))}
               </div>
             )}
           </div>
         </main>
 
-        {/* Reveal Move Modal */}
-        {selectedRoomForReveal && (
-          <RevealMoveModal
-            isOpen={revealModalOpen}
-            onClose={() => {
-              setRevealModalOpen(false);
-              setSelectedRoomForReveal(null);
-            }}
-            onReveal={handleRevealMoveConfirm}
-            roomId={selectedRoomForReveal}
-            isLoading={isRevealLoading}
-          />
-        )}
       </div>
     </AuthGuard>
   );

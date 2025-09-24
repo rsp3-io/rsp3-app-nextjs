@@ -96,6 +96,8 @@ export default function CreateRoom() {
         baseStake,
         commitHash,
         tier: selectedTier,
+        move: selectedMove!,
+        salt,
       });
 
       // Redirect to my games page
