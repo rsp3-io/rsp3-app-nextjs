@@ -55,9 +55,10 @@ export default function Header() {
     return currentItem ? currentItem.label : 'Navigation';
   };
 
-  // Don't show header on authentication pages or if user is not authenticated
+  // Don't show header on authentication pages, referral code pages, or if user is not authenticated
   const authPages = ['/', '/redirect', '/logout'];
-  if (authPages.includes(pathname) || !isAuthenticated || !accountAddress) {
+  const isReferralCodePage = pathname.startsWith('/referral/') && pathname !== '/referral';
+  if (authPages.includes(pathname) || isReferralCodePage || !isAuthenticated || !accountAddress) {
     return null;
   }
 
@@ -67,6 +68,7 @@ export default function Header() {
     { href: '/rooms', label: 'Game Rooms' },
     { href: '/create-room', label: 'Create Room' },
     { href: '/my-games', label: 'My Games' },
+    { href: '/referral', label: 'Referrals' },
   ];
 
   return (

@@ -7,6 +7,7 @@ import { ToastProvider } from '@/contexts/ToastContext';
 import { BalanceProvider } from '@/contexts/BalanceContext';
 import { wagmiConfig } from '@/lib/wagmi';
 import { useState } from 'react';
+import ReferralHandler from './ReferralHandler';
 
 export default function Providers({ children }: { children: React.ReactNode }) {
   const [queryClient] = useState(() => new QueryClient({
@@ -24,6 +25,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
           <BalanceProvider>
             <ToastProvider>
               {children}
+              <ReferralHandler />
             </ToastProvider>
           </BalanceProvider>
         </AuthProvider>

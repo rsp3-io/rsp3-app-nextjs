@@ -91,7 +91,7 @@ export default function Dashboard() {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                   <Link href="/rooms" className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow">
                     <h3 className="text-xl font-semibold text-gray-700 mb-2">Game Rooms</h3>
                     <p className="text-gray-600">Browse and join existing game rooms</p>
@@ -105,6 +105,11 @@ export default function Dashboard() {
                   <Link href="/my-games" className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow">
                     <h3 className="text-xl font-semibold text-gray-700 mb-2">My Games</h3>
                     <p className="text-gray-600">View your current and completed games</p>
+                  </Link>
+                  
+                  <Link href="/referral" className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow">
+                    <h3 className="text-xl font-semibold text-gray-700 mb-2">Referrals</h3>
+                    <p className="text-gray-600">Share your referral link and earn rewards</p>
                   </Link>
                 </div>
               </div>
