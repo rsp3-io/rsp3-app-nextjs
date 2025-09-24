@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useReadContract } from 'wagmi';
+import { useRouter } from 'next/navigation';
 import AuthGuard from '@/components/AuthGuard';
 import RoomCard from '@/components/RoomCard';
 import { useAvailableRooms } from '@/hooks/useAvailableRooms';
@@ -12,6 +13,7 @@ import { RSP3_ABI } from '@/abi/rsp3';
 import Link from 'next/link';
 
 export default function Rooms() {
+  const router = useRouter();
   const { rooms, refetch, isLoading, error } = useAvailableRooms();
   const { joinRoom, isLoading: isJoining } = useJoinRoom();
   const [showExpired, setShowExpired] = useState(false);
@@ -49,8 +51,9 @@ export default function Rooms() {
   const handleJoinRoom = async (roomId: bigint, move: Move) => {
     try {
       await joinRoom(roomId, move);
-      // Refetch rooms after successful join
-      await refetch();
+      
+      // Redirect to my-games page after successful join
+      router.push('/my-games');
     } catch (error) {
       console.error('Failed to join room:', error);
     }
