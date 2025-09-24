@@ -1,7 +1,6 @@
 'use client';
 
 import AuthGuard from '@/components/AuthGuard';
-import BalanceDisplay from '@/components/BalanceDisplay';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/contexts/ToastContext';
 import { copyToClipboard } from '@/lib/copyToClipboard';
@@ -55,27 +54,6 @@ export default function Dashboard() {
   return (
     <AuthGuard>
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
-        <nav className="bg-white shadow-lg">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex flex-col lg:flex-row justify-between py-4 lg:py-0 lg:h-16">
-              <div className="flex items-center mb-4 lg:mb-0">
-                <h1 className="text-2xl font-bold text-gray-900">RSP3</h1>
-              </div>
-              <div className="flex flex-col lg:flex-row items-start lg:items-center space-y-4 lg:space-y-0 lg:space-x-6">
-                <BalanceDisplay />
-                <div className="flex items-center space-x-4">
-                  <span className="text-gray-700 text-sm lg:text-base">Welcome, {user?.email || 'Player'}!</span>
-                  <button
-                    onClick={handleLogout}
-                    className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors"
-                  >
-                    Logout
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </nav>
 
         <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
           <div className="px-4 py-6 sm:px-0">
