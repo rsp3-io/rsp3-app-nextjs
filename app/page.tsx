@@ -67,7 +67,7 @@ export default function Home() {
                 </span>
               </p>
               <p className="text-sm text-blue-600">
-                Sign in to accept the referral and start earning benefits!
+                Sign in to accept the referral! They&apos;ll earn from platform fees, not your winnings.
               </p>
             </div>
           ) : (

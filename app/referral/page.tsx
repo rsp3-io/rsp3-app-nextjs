@@ -106,7 +106,7 @@ export default function ReferralPage() {
               <div className="p-6">
                 <h2 className="text-2xl font-bold text-gray-900 mb-4">Your Referral Link</h2>
                 <p className="text-gray-600 mb-6">
-                  Share this link with friends. When they sign up and play games, you&apos;ll earn referral rewards!
+                  Share this link with friends. When they play games, you&apos;ll earn a share of platform fees - their winnings stay the same!
                 </p>
                 
                 {referralLink && (
@@ -209,8 +209,9 @@ export default function ReferralPage() {
               </div>
 
               <div className="mt-8 p-4 bg-yellow-50 rounded-lg border border-yellow-200">
-                <h4 className="font-semibold text-yellow-800 mb-2">📊 Reward Details</h4>
+                <h4 className="font-semibold text-yellow-800 mb-2">📊 How Referral Rewards Work</h4>
                 <ul className="text-sm text-yellow-700 space-y-1">
+                  <li>• <strong>Your referees keep all their winnings</strong> - referrals only affect platform fees</li>
                   <li>• You earn 10% of platform fees from your referees&apos; games</li>
                   <li>• Rewards are automatically credited to your account balance</li>
                   <li>• Both players&apos; referrers earn from each game independently</li>

@@ -129,7 +129,7 @@ export default function ReferralCodePage() {
             </span>
           </p>
           <p className="text-gray-600 mb-6">
-            Sign in to accept the referral and start playing Rock-Scissors-Paper with cryptocurrency stakes!
+            Sign in to accept the referral and start playing! Your referrer will earn from platform fees, not your winnings.
           </p>
           <button
             onClick={() => router.push('/')}
@@ -139,11 +139,11 @@ export default function ReferralCodePage() {
           </button>
           
           <div className="mt-6 p-4 bg-blue-50 rounded-lg">
-            <h3 className="font-semibold text-blue-800 mb-2">🎉 Benefits of Being Referred</h3>
+            <h3 className="font-semibold text-blue-800 mb-2">🎉 How Referrals Work</h3>
             <ul className="text-sm text-blue-700 text-left space-y-1">
-              <li>• Your referrer will earn from your games</li>
-              <li>• You can refer others and earn too</li>
-              <li>• Join a community of strategic players</li>
+              <li>• <strong>Your winnings stay the same</strong> - referrals only affect platform fees</li>
+              <li>• Your referrer earns a share of platform fees, not your profits</li>
+              <li>• You can refer others and earn rewards too</li>
               <li>• Transparent blockchain-based gaming</li>
             </ul>
           </div>
@@ -199,7 +199,7 @@ export default function ReferralCodePage() {
             </span>
           </p>
           <p className="text-gray-600 mb-6">
-            Would you like to set them as your referrer? This will allow them to earn rewards from your games.
+            Would you like to set them as your referrer? They&apos;ll earn a share of platform fees when you play - <strong>this doesn&apos;t reduce your winnings!</strong>
           </p>
 
           <div className="space-y-3">
@@ -221,10 +221,11 @@ export default function ReferralCodePage() {
           </div>
 
           <div className="mt-6 p-4 bg-blue-50 rounded-lg">
-            <h3 className="font-semibold text-blue-800 mb-2">🎉 Referral Benefits</h3>
+            <h3 className="font-semibold text-blue-800 mb-2">🎉 How Referrals Work</h3>
             <ul className="text-sm text-blue-700 text-left space-y-1">
-              <li>• Your referrer earns from your games</li>
-              <li>• You can refer others and earn too</li>
+              <li>• <strong>Your winnings stay the same</strong> - referrals only affect platform fees</li>
+              <li>• Your referrer earns 10% of platform fees from your games</li>
+              <li>• You can refer others and earn rewards too</li>
               <li>• Join a community of strategic players</li>
               <li>• This setting is permanent once accepted</li>
             </ul>

@@ -85,7 +85,7 @@ export default function ReferralHandler() {
             </span>
           </p>
           <p className="text-gray-600 mb-6">
-            Would you like to set them as your referrer? They&apos;ll earn rewards from your games.
+            Would you like to set them as your referrer? They&apos;ll earn a share of platform fees when you play - <strong>this doesn&apos;t reduce your winnings!</strong>
           </p>
 
           <div className="space-y-3">
@@ -107,8 +107,9 @@ export default function ReferralHandler() {
           </div>
 
           <div className="mt-6 p-4 bg-blue-50 rounded-lg">
-            <h3 className="font-semibold text-blue-800 mb-2">🎉 Referral Benefits</h3>
+            <h3 className="font-semibold text-blue-800 mb-2">🎉 How Referrals Work</h3>
             <ul className="text-sm text-blue-700 text-left space-y-1">
+              <li>• <strong>Your winnings stay the same</strong> - referrals only affect platform fees</li>
               <li>• Your referrer earns 10% of platform fees from your games</li>
               <li>• You can refer others and earn rewards too</li>
               <li>• Join a community of strategic players</li>
