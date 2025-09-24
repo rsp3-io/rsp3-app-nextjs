@@ -43,8 +43,9 @@ export default function GameCard({
 }: GameCardProps) {
   const [showFullSalt, setShowFullSalt] = useState(false);
   
-  // Get saved move choice for this room (only for rooms created by this user)
-  const savedChoice = game.role === 'playerA' ? useSavedMoveChoice(game.roomId, game.baseStake) : null;
+  // Always call the hook to follow Rules of Hooks, but only use result for playerA
+  const savedMoveData = useSavedMoveChoice(game.roomId, game.baseStake);
+  const savedChoice = game.role === 'playerA' ? savedMoveData : null;
 
   // Helper function to truncate salt for display
   const truncateSalt = (salt: string): string => {
