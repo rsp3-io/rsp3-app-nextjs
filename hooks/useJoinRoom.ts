@@ -7,11 +7,13 @@ import { CONTRACT_CONFIG } from '@/lib/contracts';
 import { Move } from '@/types';
 import { useToast } from '@/contexts/ToastContext';
 import { useAuth } from '@/contexts/AuthContext';
+import { useBalanceContext } from '@/contexts/BalanceContext';
 import { passportInstance } from '@/lib/passport';
 
 export function useJoinRoom() {
   const { accountAddress } = useAuth();
   const { addToast } = useToast();
+  const { refetchBalances } = useBalanceContext();
   const [isLoading, setIsLoading] = useState(false);
 
   const joinRoom = async (roomId: bigint, move: Move) => {
@@ -52,6 +54,9 @@ export function useJoinRoom() {
         });
         
         if (receipt) {
+          // Refetch balances after successful room join
+          refetchBalances();
+          
           addToast({ title: 'Successfully joined room!', type: 'success' });
           return txHash;
         }

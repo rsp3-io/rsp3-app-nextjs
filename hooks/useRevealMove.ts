@@ -7,11 +7,13 @@ import { CONTRACT_CONFIG } from '@/lib/contracts';
 import { Move } from '@/types';
 import { useToast } from '@/contexts/ToastContext';
 import { useAuth } from '@/contexts/AuthContext';
+import { useBalanceContext } from '@/contexts/BalanceContext';
 import { passportInstance } from '@/lib/passport';
 
 export function useRevealMove() {
   const { accountAddress } = useAuth();
   const { addToast } = useToast();
+  const { refetchBalances } = useBalanceContext();
   const [isLoading, setIsLoading] = useState(false);
 
   const revealMove = async (roomId: number, move: Move, salt: string) => {
@@ -52,6 +54,9 @@ export function useRevealMove() {
         });
         
         if (receipt) {
+          // Refetch balances after successful move reveal
+          refetchBalances();
+          
           addToast({ title: 'Move revealed successfully!', type: 'success' });
           return txHash;
         }

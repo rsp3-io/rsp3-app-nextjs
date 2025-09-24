@@ -6,11 +6,13 @@ import { RSP3_ABI } from '@/abi/rsp3';
 import { CONTRACT_CONFIG } from '@/lib/contracts';
 import { useToast } from '@/contexts/ToastContext';
 import { useAuth } from '@/contexts/AuthContext';
+import { useBalanceContext } from '@/contexts/BalanceContext';
 import { passportInstance } from '@/lib/passport';
 
 export function useCancelExpiredRoom() {
   const { accountAddress } = useAuth();
   const { addToast } = useToast();
+  const { refetchBalances } = useBalanceContext();
   const [isLoading, setIsLoading] = useState(false);
 
   const cancelExpiredRoom = async (roomId: number) => {
@@ -51,6 +53,9 @@ export function useCancelExpiredRoom() {
         });
         
         if (receipt) {
+          // Refetch balances after successful room cancellation
+          refetchBalances();
+          
           addToast({ title: 'Room cancelled successfully!', type: 'success' });
           return txHash;
         }
@@ -84,6 +89,7 @@ export function useCancelExpiredRoom() {
 export function useClaimForfeit() {
   const { accountAddress } = useAuth();
   const { addToast } = useToast();
+  const { refetchBalances } = useBalanceContext();
   const [isLoading, setIsLoading] = useState(false);
 
   const claimForfeit = async (roomId: number) => {
@@ -124,6 +130,9 @@ export function useClaimForfeit() {
         });
         
         if (receipt) {
+          // Refetch balances after successful forfeit claim
+          refetchBalances();
+          
           addToast({ title: 'Forfeit claimed successfully!', type: 'success' });
           return txHash;
         }

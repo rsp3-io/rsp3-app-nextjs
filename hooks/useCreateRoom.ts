@@ -8,12 +8,14 @@ import { CONTRACT_CONFIG } from '@/lib/contracts';
 import { Tier, Move, TierMultipliers, CreateRoomParams, StakeCalculation } from '@/types';
 import { useToast } from '@/contexts/ToastContext';
 import { useAuth } from '@/contexts/AuthContext';
+import { useBalanceContext } from '@/contexts/BalanceContext';
 import { passportInstance } from '@/lib/passport';
 import { saveMoveChoice } from '@/lib/moveStorage';
 
 export function useCreateRoom() {
   const { accountAddress } = useAuth();
   const { addToast } = useToast();
+  const { refetchBalances } = useBalanceContext();
   const [isLoading, setIsLoading] = useState(false);
   const currentRoomData = useRef<{ baseStake: bigint; move: Move; salt: string } | null>(null);
 
@@ -255,6 +257,9 @@ export function useCreateRoom() {
             // Clear the current room data since it's been processed
             currentRoomData.current = null;
           }
+          
+          // Refetch balances after successful room creation
+          refetchBalances();
           
           addToast({ title: 'Room created successfully!', type: 'success' });
           return { txHash, roomId };

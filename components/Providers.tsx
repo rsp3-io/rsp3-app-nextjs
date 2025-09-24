@@ -4,6 +4,7 @@ import { WagmiProvider } from 'wagmi';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AuthProvider } from '@/contexts/AuthContext';
 import { ToastProvider } from '@/contexts/ToastContext';
+import { BalanceProvider } from '@/contexts/BalanceContext';
 import { wagmiConfig } from '@/lib/wagmi';
 import { useState } from 'react';
 
@@ -20,9 +21,11 @@ export default function Providers({ children }: { children: React.ReactNode }) {
     <WagmiProvider config={wagmiConfig}>
       <QueryClientProvider client={queryClient}>
         <AuthProvider>
-          <ToastProvider>
-            {children}
-          </ToastProvider>
+          <BalanceProvider>
+            <ToastProvider>
+              {children}
+            </ToastProvider>
+          </BalanceProvider>
         </AuthProvider>
       </QueryClientProvider>
     </WagmiProvider>

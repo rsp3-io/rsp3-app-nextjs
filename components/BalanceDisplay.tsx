@@ -1,6 +1,7 @@
 'use client';
 
-import { useBalances, formatBalance } from '@/hooks/useBalance';
+import { formatBalance } from '@/hooks/useBalance';
+import { useBalanceContext } from '@/contexts/BalanceContext';
 import { useUSDTFaucet } from '@/hooks/useFaucet';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/contexts/ToastContext';
@@ -10,7 +11,7 @@ import WithdrawModal from './WithdrawModal';
 
 export default function BalanceDisplay() {
   const { accountAddress } = useAuth();
-  const { usdtBalance, playerBalance, isLoading, error, refetch } = useBalances();
+  const { usdtBalance, playerBalance, isLoading, error, refetchBalances } = useBalanceContext();
   const { addToast } = useToast();
   const { 
     faucet, 
@@ -30,27 +31,27 @@ export default function BalanceDisplay() {
 
   // Memoize the refetch function to prevent infinite loops
   const handleRefetch = useCallback(() => {
-    refetch();
-  }, [refetch]);
+    refetchBalances();
+  }, [refetchBalances]);
 
   // Memoize success handlers to prevent duplicate toasts
   const handleDepositSuccess = useCallback(() => {
-    refetch();
+    refetchBalances();
     addToast({
       type: 'success',
       title: 'Deposit Successful!',
       message: 'USDT has been deposited to your game balance',
     });
-  }, [refetch, addToast]);
+  }, [refetchBalances, addToast]);
 
   const handleWithdrawSuccess = useCallback(() => {
-    refetch();
+    refetchBalances();
     addToast({
       type: 'success', 
       title: 'Withdraw Successful!',
       message: 'USDT has been withdrawn to your wallet',
     });
-  }, [refetch, addToast]);
+  }, [refetchBalances, addToast]);
 
   // Handle faucet success
   useEffect(() => {
