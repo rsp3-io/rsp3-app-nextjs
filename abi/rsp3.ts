@@ -355,6 +355,69 @@ export const RSP3_ABI = [
       {
         indexed: true,
         internalType: "address",
+        name: "referrer",
+        type: "address",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "amount",
+        type: "uint256",
+      },
+    ],
+    name: "ReferralFeeDistributed",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "oldPercentage",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "newPercentage",
+        type: "uint256",
+      },
+    ],
+    name: "ReferralPercentageUpdated",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "address",
+        name: "player",
+        type: "address",
+      },
+      {
+        indexed: true,
+        internalType: "address",
+        name: "referrer",
+        type: "address",
+      },
+    ],
+    name: "ReferrerSet",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "uint256",
+        name: "roomId",
+        type: "uint256",
+      },
+      {
+        indexed: true,
+        internalType: "address",
         name: "playerA",
         type: "address",
       },
@@ -734,6 +797,38 @@ export const RSP3_ABI = [
     type: "function",
   },
   {
+    inputs: [],
+    name: "getReferralPercentage",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "player",
+        type: "address",
+      },
+    ],
+    name: "getReferrer",
+    outputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
     inputs: [
       {
         internalType: "uint256",
@@ -1040,6 +1135,19 @@ export const RSP3_ABI = [
     inputs: [
       {
         internalType: "address",
+        name: "referrer",
+        type: "address",
+      },
+    ],
+    name: "setReferrer",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
         name: "newOwner",
         type: "address",
       },
@@ -1078,6 +1186,19 @@ export const RSP3_ABI = [
       },
     ],
     name: "updatePlatformFeeRecipient",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "newPercentage",
+        type: "uint256",
+      },
+    ],
+    name: "updateReferralPercentage",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
