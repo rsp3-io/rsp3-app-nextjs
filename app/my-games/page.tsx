@@ -13,6 +13,7 @@ import { RSP3_ABI } from '@/abi/rsp3';
 import { formatBalance } from '@/hooks/useBalance';
 import { useAuth } from '@/contexts/AuthContext';
 import RevealMoveModal from '@/components/RevealMoveModal';
+import { formatTierBadge } from '@/lib/tierUtils';
 
 interface PlayerGame {
   roomId: number;
@@ -21,6 +22,7 @@ interface PlayerGame {
   timeLeft: number;
   stake: string;
   needsAction: boolean;
+  tier: number;
 }
 
 export default function MyGames() {
@@ -72,6 +74,7 @@ export default function MyGames() {
         timeLeft,
         stake: formatBalance(stake, decimals),
         needsAction: isPlayerA && room.state === GameState.WaitingForReveal && timeLeft > 0,
+        tier: room.tier,
       };
     })
     .sort((a, b) => b.roomId - a.roomId); // Sort by roomId descending (newest first)
@@ -225,7 +228,17 @@ export default function MyGames() {
                   <div key={game.roomId} className="bg-white rounded-lg shadow-md p-6">
                     <div className="flex justify-between items-start mb-4">
                       <div>
-                        <h3 className="text-xl font-semibold text-gray-900">Room #{game.roomId}</h3>
+                        <div className="flex items-center gap-2 mb-1">
+                          <h3 className="text-xl font-semibold text-gray-900">Room #{game.roomId}</h3>
+                          {(() => {
+                            const tierBadge = formatTierBadge(game.tier);
+                            return (
+                              <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${tierBadge.colors.textColor} ${tierBadge.colors.bgColor}`}>
+                                {tierBadge.emoji} {tierBadge.name}
+                              </span>
+                            );
+                          })()}
+                        </div>
                         <p className="text-gray-600">
                           {game.role === 'playerA' ? 'You created this room' : 'You joined this room'}
                         </p>

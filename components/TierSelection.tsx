@@ -1,6 +1,7 @@
 'use client';
 
 import { Tier, TierMultipliers } from '@/types';
+import { tierInfo } from '@/lib/tierUtils';
 
 interface TierSelectionProps {
   selectedTier: Tier;
@@ -12,32 +13,6 @@ interface TierSelectionProps {
   };
 }
 
-const tierInfo = {
-  [Tier.Casual]: {
-    name: 'Casual',
-    description: 'Low risk, moderate rewards',
-    color: 'bg-green-500',
-    textColor: 'text-green-700',
-    borderColor: 'border-green-300',
-    ratio: '5:2:1',
-  },
-  [Tier.Standard]: {
-    name: 'Standard',
-    description: 'Balanced risk and rewards',
-    color: 'bg-blue-500',
-    textColor: 'text-blue-700',
-    borderColor: 'border-blue-300',
-    ratio: '10:5:1',
-  },
-  [Tier.Degen]: {
-    name: 'Degen',
-    description: 'High risk, high rewards',
-    color: 'bg-red-500',
-    textColor: 'text-red-700',
-    borderColor: 'border-red-300',
-    ratio: '100:20:1',
-  },
-};
 
 export default function TierSelection({ selectedTier, onTierChange, multipliers }: TierSelectionProps) {
   return (
