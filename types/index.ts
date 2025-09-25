@@ -28,12 +28,15 @@ export interface GameRoom {
   playerAStake: bigint;
   playerBStake: bigint;
   playerACommit: string;
+  playerAMove: Move;
   playerBMove: Move;
   revealDeadline: bigint;
   expirationTime: bigint;
   state: GameState;
   collateralPenalty: bigint;
   tier: Tier;
+  playerABalanceChange: bigint;
+  playerBBalanceChange: bigint;
 }
 
 export interface MoveData {

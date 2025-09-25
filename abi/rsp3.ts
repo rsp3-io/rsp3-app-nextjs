@@ -172,6 +172,25 @@ export const RSP3_ABI = [
     anonymous: false,
     inputs: [
       {
+        indexed: false,
+        internalType: "uint256",
+        name: "oldPercentage",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "newPercentage",
+        type: "uint256",
+      },
+    ],
+    name: "DrawFeeUpdated",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
         indexed: true,
         internalType: "uint256",
         name: "roomId",
@@ -464,6 +483,25 @@ export const RSP3_ABI = [
     type: "event",
   },
   {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "oldPercentage",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "newPercentage",
+        type: "uint256",
+      },
+    ],
+    name: "WinningGameFeeUpdated",
+    type: "event",
+  },
+  {
     inputs: [],
     name: "UPGRADE_INTERFACE_VERSION",
     outputs: [
@@ -629,6 +667,11 @@ export const RSP3_ABI = [
           },
           {
             internalType: "enum IRSP3.Move",
+            name: "playerAMove",
+            type: "uint8",
+          },
+          {
+            internalType: "enum IRSP3.Move",
             name: "playerBMove",
             type: "uint8",
           },
@@ -657,10 +700,33 @@ export const RSP3_ABI = [
             name: "tier",
             type: "uint8",
           },
+          {
+            internalType: "int256",
+            name: "playerABalanceChange",
+            type: "int256",
+          },
+          {
+            internalType: "int256",
+            name: "playerBBalanceChange",
+            type: "int256",
+          },
         ],
         internalType: "struct IRSP3.Room[]",
         name: "",
         type: "tuple[]",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "getDrawFee",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
       },
     ],
     stateMutability: "view",
@@ -728,6 +794,11 @@ export const RSP3_ABI = [
           },
           {
             internalType: "enum IRSP3.Move",
+            name: "playerAMove",
+            type: "uint8",
+          },
+          {
+            internalType: "enum IRSP3.Move",
             name: "playerBMove",
             type: "uint8",
           },
@@ -755,6 +826,16 @@ export const RSP3_ABI = [
             internalType: "enum IRSP3.Tier",
             name: "tier",
             type: "uint8",
+          },
+          {
+            internalType: "int256",
+            name: "playerABalanceChange",
+            type: "int256",
+          },
+          {
+            internalType: "int256",
+            name: "playerBBalanceChange",
+            type: "int256",
           },
         ],
         internalType: "struct IRSP3.Room[]",
@@ -791,6 +872,136 @@ export const RSP3_ABI = [
         internalType: "struct IRSP3.PlayerBalance",
         name: "",
         type: "tuple",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "player",
+        type: "address",
+      },
+      {
+        internalType: "uint256",
+        name: "offset",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "limit",
+        type: "uint256",
+      },
+    ],
+    name: "getPlayerGameHistory",
+    outputs: [
+      {
+        components: [
+          {
+            internalType: "uint256",
+            name: "roomId",
+            type: "uint256",
+          },
+          {
+            internalType: "address",
+            name: "playerA",
+            type: "address",
+          },
+          {
+            internalType: "address",
+            name: "playerB",
+            type: "address",
+          },
+          {
+            internalType: "uint256",
+            name: "baseStake",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "playerAStake",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "playerBStake",
+            type: "uint256",
+          },
+          {
+            internalType: "bytes32",
+            name: "playerACommit",
+            type: "bytes32",
+          },
+          {
+            internalType: "enum IRSP3.Move",
+            name: "playerAMove",
+            type: "uint8",
+          },
+          {
+            internalType: "enum IRSP3.Move",
+            name: "playerBMove",
+            type: "uint8",
+          },
+          {
+            internalType: "uint256",
+            name: "revealDeadline",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "expirationTime",
+            type: "uint256",
+          },
+          {
+            internalType: "enum IRSP3.GameState",
+            name: "state",
+            type: "uint8",
+          },
+          {
+            internalType: "uint256",
+            name: "collateralPenalty",
+            type: "uint256",
+          },
+          {
+            internalType: "enum IRSP3.Tier",
+            name: "tier",
+            type: "uint8",
+          },
+          {
+            internalType: "int256",
+            name: "playerABalanceChange",
+            type: "int256",
+          },
+          {
+            internalType: "int256",
+            name: "playerBBalanceChange",
+            type: "int256",
+          },
+        ],
+        internalType: "struct IRSP3.Room[]",
+        name: "",
+        type: "tuple[]",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "player",
+        type: "address",
+      },
+    ],
+    name: "getPlayerGameHistoryCount",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
       },
     ],
     stateMutability: "view",
@@ -877,6 +1088,11 @@ export const RSP3_ABI = [
           },
           {
             internalType: "enum IRSP3.Move",
+            name: "playerAMove",
+            type: "uint8",
+          },
+          {
+            internalType: "enum IRSP3.Move",
             name: "playerBMove",
             type: "uint8",
           },
@@ -904,6 +1120,16 @@ export const RSP3_ABI = [
             internalType: "enum IRSP3.Tier",
             name: "tier",
             type: "uint8",
+          },
+          {
+            internalType: "int256",
+            name: "playerABalanceChange",
+            type: "int256",
+          },
+          {
+            internalType: "int256",
+            name: "playerBBalanceChange",
+            type: "int256",
           },
         ],
         internalType: "struct IRSP3.Room",
@@ -983,6 +1209,19 @@ export const RSP3_ABI = [
         internalType: "uint8",
         name: "",
         type: "uint8",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "getWinningGameFee",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
       },
     ],
     stateMutability: "view",
@@ -1180,6 +1419,19 @@ export const RSP3_ABI = [
   {
     inputs: [
       {
+        internalType: "uint256",
+        name: "newPercentage",
+        type: "uint256",
+      },
+    ],
+    name: "updateDrawFee",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
         internalType: "address",
         name: "newRecipient",
         type: "address",
@@ -1238,6 +1490,19 @@ export const RSP3_ABI = [
       },
     ],
     name: "updateUsdtToken",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "newPercentage",
+        type: "uint256",
+      },
+    ],
+    name: "updateWinningGameFee",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",

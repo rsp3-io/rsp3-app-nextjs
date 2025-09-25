@@ -68,6 +68,7 @@ export default function Header() {
     { href: '/rooms', label: 'Game Rooms' },
     { href: '/create-room', label: 'Create Room' },
     { href: '/my-games', label: 'My Games' },
+    { href: '/game-history', label: 'Game History' },
     { href: '/referral', label: 'Referrals' },
   ];
 
